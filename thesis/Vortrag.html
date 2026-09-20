@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Vortrag — Handpapier</title>
+<style>
+  @page { size: A4; margin: 12mm 13mm; }
+
+  :root { --rule: #333; --soft: #888; }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: Arial, "Segoe UI", sans-serif;
+    font-size: 9pt;
+    line-height: 1.34;
+    color: #000;
+    margin: 0 auto;
+    padding: 12mm 13mm;
+    max-width: 210mm;
+    background: #fff;
+  }
+
+  /* Bildschirm-Hinweis, verschwindet beim Drucken */
+  .hint {
+    border: 1px solid var(--soft);
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    font-size: 8.5pt;
+    color: #444;
+    border-radius: 3px;
+  }
+  .hint b { color: #000; }
+
+  h1 { font-size: 15pt; margin: 0 0 2px; letter-spacing: -0.2px; }
+  .subtitle { font-size: 9.5pt; font-weight: bold; margin: 0 0 2px; }
+  .meta { font-size: 8pt; color: #444; margin: 0 0 10px; }
+
+  h2 {
+    font-size: 10.5pt;
+    margin: 13px 0 5px;
+    padding-bottom: 2px;
+    border-bottom: 1.2pt solid var(--rule);
+  }
+
+  h3 {
+    font-size: 9.5pt;
+    margin: 11px 0 3px;
+    padding-left: 6px;
+    border-left: 3pt solid var(--rule);
+  }
+  h3 .when { font-weight: normal; color: #444; font-size: 8.5pt; }
+
+  p { margin: 3px 0; }
+
+  /* Roter Faden / Kernbotschaften: Rahmen statt Hintergrund,
+     damit es auch ohne "Hintergrundgrafiken drucken" sichtbar bleibt */
+  .faden {
+    border: 1pt solid var(--rule);
+    border-left: 4pt solid var(--rule);
+    padding: 6px 9px;
+    margin: 8px 0 12px;
+    font-size: 9.5pt;
+  }
+  .kern {
+    border-left: 2.5pt solid var(--soft);
+    padding: 1px 0 1px 8px;
+    margin: 4px 0 5px;
+  }
+  .kern::before { content: "Kernbotschaft: "; font-weight: bold; }
+
+  ul { margin: 3px 0 3px 0; padding-left: 15px; }
+  li { margin: 1.5px 0; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 6px 0 10px;
+    font-size: 8.5pt;
+  }
+  th, td {
+    border: 0.6pt solid var(--soft);
+    padding: 3px 5px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { font-weight: bold; border-bottom: 1.2pt solid var(--rule); }
+  td.t { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  tr.takt td { font-weight: bold; }
+  tr.takt td.t { border-left: 3pt solid var(--rule); }
+
+  code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 8pt;
+    border: 0.5pt solid #bbb;
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+  pre {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 8pt;
+    border: 0.6pt solid var(--soft);
+    border-left: 2.5pt solid var(--rule);
+    padding: 4px 7px;
+    margin: 4px 0;
+    white-space: pre-wrap;
+    line-height: 1.25;
+  }
+  pre .lang { color: #666; font-style: italic; }
+
+  .note { font-size: 8.5pt; }
+
+  /* Umbruchsteuerung */
+  section { break-inside: avoid; page-break-inside: avoid; }
+  table   { break-inside: avoid; page-break-inside: avoid; }
+  h2, h3  { break-after: avoid; page-break-after: avoid; }
+
+  @media print {
+    .hint { display: none; }
+    body { padding: 0; max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hint">
+  <b>Drucken:</b> <code>Strg+P</code> → Ziel <i>Drucker</i> oder <i>Als PDF speichern</i> → Papier <b>A4</b>, Ränder <b>Standard</b>,
+  Skalierung <b>100&nbsp;%</b>. Kopf-/Fußzeilen abschalten. „Hintergrundgrafiken“ werden <b>nicht</b> benötigt —
+  das Layout arbeitet nur mit Linien. Dieser Kasten wird nicht mitgedruckt.
+</div>
+
+<h1>Vortrag — Handpapier</h1>
+<p class="subtitle">Entwurf und Evaluation eines automatisierten Migrationswerkzeugs von Katalon-Groovy-Tests zu Selenium-Pytest</p>
+<p class="meta">Konstantin Lucius Regenhardt · HTW Berlin · Prüfer: Prof. Dr. Jochen Wittmann · Zweitgutachter: Ankit Kumar · 15 Minuten</p>
+
+<div class="faden">
+  <b>Roter Faden</b> — im Einstieg setzen, am Ende aufgreifen:<br>
+  Katalon macht den Einstieg leicht und den Ausstieg teuer — aber genau die starre, proprietäre Struktur,
+  die den Lock-in erzeugt, ist berechenbar genug, um sie automatisiert aufzulösen.
+</div>
+
+<section>
+<h2>Zahlen-Spickzettel</h2>
+<table>
+  <tr><td class="t">Testskripte übersetzt</td><td><b>7 von 10 = 70 %</b>, 3 offen (30 %)</td></tr>
+  <tr><td class="t">Object Repository</td><td><b>10 von 10</b> <code>.rs</code> → JSON</td></tr>
+  <tr><td class="t">Weitere Artefakte</td><td>1 Variablendatei, 2 Runtime-Dateien, 4 Konfigurationsdateien, 1 Datendatei</td></tr>
+  <tr><td class="t"><code>pytest --collect-only</code></td><td><b>7 collected</b>, 0 Importfehler, 0.46 s</td></tr>
+  <tr><td class="t">Testlauf</td><td>Katalon <b>10/10</b> grün · Python <b>7/7</b> grün</td></tr>
+  <tr><td class="t">Boilerplate</td><td><b>18 → 7</b> Importzeilen</td></tr>
+  <tr><td class="t">Laufzeit Migration</td><td><b>&lt; 1 Sekunde</b> vs. geschätzt hoher einstelliger bis zweistelliger Stundenbereich manuell</td></tr>
+  <tr><td class="t">Setup</td><td><code>sample-website-katalon-tests</code>, Windows 11, Python 3.13.0, pytest 8.4.1</td></tr>
+  <tr><td class="t">Module im Migrator</td><td>7 Pipeline-Module, orchestriert von <code>main.py</code></td></tr>
+  <tr><td class="t">Katalon-Formate</td><td><code>.tc</code> · <code>.rs</code> · <code>.glbl</code> · <code>.dat</code> — vier Endungen, alles XML</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Ablauf mit laufender Uhr</h2>
+<p class="note">Taktmarken fett markiert — wenn du dort bist, liegst du richtig.</p>
+<table>
+  <tr><th style="width:11%">Uhr</th><th style="width:44%">Abschnitt</th><th style="width:10%">Dauer</th><th style="width:35%">PDF-Sprungmarke</th></tr>
+  <tr><td class="t">0:00</td><td>1 Einstieg</td><td class="t">0:30</td><td>Titelseite</td></tr>
+  <tr><td class="t">0:30</td><td>2 Motivation &amp; Problemstellung</td><td class="t">1:45</td><td>Kap. 1.1 / 1.2</td></tr>
+  <tr><td class="t">2:15</td><td>3 Ziel &amp; vier Leitfragen</td><td class="t">0:45</td><td>Kap. 1.3</td></tr>
+  <tr class="takt"><td class="t">3:00</td><td>4 Was hinter einem Katalon-Projekt liegt</td><td class="t">2:15</td><td>Kap. 3.2.1 (Ordnerbaum), 3.1.2, 3.1.3</td></tr>
+  <tr><td class="t">5:15</td><td>5 Zielstruktur</td><td class="t">0:45</td><td>Kap. 3.3.1 (Ordnerbaum Ziel)</td></tr>
+  <tr class="takt"><td class="t">6:00</td><td>6 Migrationspipeline</td><td class="t">1:15</td><td>Kap. 4.2 (Übersichtsdiagramm)</td></tr>
+  <tr><td class="t">7:15</td><td>7 Transpilation &amp; Regex</td><td class="t">1:30</td><td>Kap. 4.3 (Aktivitätsdiagramm), 5.3.1</td></tr>
+  <tr><td class="t">8:45</td><td>8 Vorher / Nachher</td><td class="t">1:15</td><td>Kap. 5.3.1.1 + 5.3.1.2</td></tr>
+  <tr class="takt"><td class="t">10:00</td><td>9 Evaluation</td><td class="t">2:15</td><td>Kap. 6.2, 6.3, 6.4, 6.5</td></tr>
+  <tr><td class="t">12:15</td><td>10 Grenzen</td><td class="t">0:45</td><td>Kap. 4.5 / 5.4</td></tr>
+  <tr><td class="t">13:00</td><td>11 Fazit &amp; Ausblick</td><td class="t">1:00</td><td>Kap. 7</td></tr>
+  <tr class="takt"><td class="t">14:00</td><td>Ende — 1 Min. Puffer</td><td class="t"></td><td></td></tr>
+</table>
+</section>
+
+<section>
+<h3>1 — Einstieg <span class="when">· 0:00–0:30 · Titelseite</span></h3>
+<p class="kern">„Ich habe ein Werkzeug gebaut, das ein komplettes Katalon-Testprojekt in ein lauffähiges Python-Projekt mit Selenium und Pytest überführt — und gemessen, wie weit das automatisch trägt.“</p>
+<p class="note">Direkt in die Ausgangslage. Keine Agenda-Folie vorlesen, das kostet bei 15 Minuten nur Zeit.</p>
+</section>
+
+<section>
+<h3>2 — Motivation &amp; Problemstellung <span class="when">· 0:30–2:15 · Kap. 1.1 / 1.2</span></h3>
+<p class="kern">„Das Problem war nicht, dass Katalon schlecht war. Das Problem war, dass wir nicht mehr rauskamen.“</p>
+<ul>
+  <li>Team baut mit Katalon Studio Testinfrastruktur für interne Geschäftssoftware auf, sie wächst über den Großteil der Software.</li>
+  <li>Bruchstelle: fortgeschrittene Anforderungen — automatisiertes Berechnen von Datumseinträgen, Debugging über die CLI, tiefere Kontrolle über die Testausführung — hängen an teureren Lizenzstufen. Preise stehen in keinem Verhältnis zur Leistung.</li>
+  <li>Das ist Vendor Lock-in im Lehrbuchsinn (Shapiro/Varian): proprietäre Formate, plattformeigene Skriptsprache, Funktionen hinter Lizenzstufen.</li>
+  <li>Neuschreiben war keine Option — zu viel Investition steckt in den bestehenden Tests. Also Migration als Proof of Concept.</li>
+  <li>Entscheidender Punkt: Migration ist <b>nicht</b> Groovy → Python. Ein Katalon-Projekt ist Testskript <b>plus</b> Object Repository, Global Variables in Profilen, testeigene Variablen, Testdaten, Custom Keywords — alles proprietär und über Pfadkonventionen verdrahtet.</li>
+</ul>
+<p class="note">Wichtigste Minute des Vortrags. Hier entsteht die Fallhöhe für alles Weitere.</p>
+</section>
+
+<section>
+<h3>3 — Ziel &amp; vier Leitfragen <span class="when">· 2:15–3:00 · Kap. 1.3</span></h3>
+<p class="kern">„Entwurf, Implementierung und Evaluation eines Migrators — mit vier messbaren Fragen.“</p>
+<ul>
+  <li>Wie viel des Quellprojekts wird automatisch übersetzt?</li>
+  <li>Wie hoch ist der tatsächliche Automatisierungsgrad?</li>
+  <li>Ist das Ergebnis funktional äquivalent zum Ausgangsprojekt?</li>
+  <li>Welche Fälle bleiben offen und erfordern manuelle Nacharbeit?</li>
+</ul>
+<p class="note">Grundlagen (Kap. 2) in max. zwei Sätzen streifen oder weglassen — die Prüfer kennen sie.</p>
+</section>
+
+<section>
+<h3>4 — Was hinter einem Katalon-Projekt liegt <span class="when">· 3:00–5:15 · Kap. 3.2.1, 3.1.2, 3.1.3</span></h3>
+<p class="kern">„In der IDE sieht man einen Test. Im Dateisystem sind es zwei Dateien in zwei Ordnern, verbunden nur über eine Pfadkonvention.“</p>
+<p class="note">Stärkster Teil — hier zeigst du etwas, das nicht offensichtlich ist. Zeit lassen.</p>
+<ul>
+  <li>Ein „Test Case“ = <code>.tc</code>-Datei (umbenanntes XML: Metadaten, GUID, Werte der testeigenen Variablen) <b>plus</b> <code>Scripts/&lt;Pfad&gt;/&lt;Testname&gt;/Script&lt;Zufallszahl&gt;.groovy</code> mit der eigentlichen Logik.</li>
+  <li>Die Zufallsnummer hat keinen Bezug zur <code>.tc</code>-Datei, die GUID taucht im Skript nie auf — die einzige Verbindung ist der gespiegelte Pfad. → <b>Ordnerbaum in Kap. 3.2.1 zeigen.</b></li>
+  <li>Variablen werden im Skript „roh“ verwendet: nicht deklariert, nicht initialisiert, kein Typ.</li>
+  <li>Object Repository (Kap. 3.1.2): <code>.rs</code> = XML mit <code>WebElementEntity</code>, mehrere Selektor-Strategien als Key-Value-Paare plus <code>selectorMethod</code>, das die bevorzugte bestimmt.</li>
+  <li>Profile (Kap. 3.1.3): <code>.glbl</code> = XML mit <code>GlobalVariableEntity</code>. Nebenbefund: als „protected“ markierte Werte sind nur in der UI maskiert — in der Datei stehen sie im Klartext.</li>
+  <li>Data Files: <code>.dat</code> = XML-Metadaten, die nur auf die eigentliche Datei zeigen.</li>
+  <li>Vier Endungen, ein Format: XML. Die Endungen verschleiern den Inhalt.</li>
+</ul>
+<div class="faden"><b>Die Wendung, die den Rest trägt:</b> Genau diese Starrheit ist der Hebel. Weil die IDE die Struktur vollständig vorgibt, ist sie vorhersagbar — und damit automatisiert auflösbar.</div>
+</section>
+
+<section>
+<h3>5 — Zielstruktur <span class="when">· 5:15–6:00 · Kap. 3.3.1</span></h3>
+<p class="kern">„Pytest schreibt fast nichts vor — deshalb spiegele ich bewusst die Katalon-Struktur, damit die Tests ihre Pfade behalten.“</p>
+<ul>
+  <li><code>src/</code>-Layout trennt gespiegelte Katalon-Strukturen von der Projektwurzel.</li>
+  <li><code>tests/</code> spiegelt die Test-Case-Ordner · <code>variables/</code> testeigene Variablen als Python-Klassen · <code>object_repository/</code> Test Objects als JSON · <code>profiles/global_variables.py</code> · <code>data/</code> Testdaten.</li>
+  <li>Dazu Laufzeithelfer und Konfiguration, damit das Projekt ohne Vorarbeit startet.</li>
+</ul>
+<p class="note">Zügig — das ist Kontext, kein Ergebnis.</p>
+</section>
+
+<section>
+<h3>6 — Migrationspipeline <span class="when">· 6:00–7:15 · Kap. 4.2 (Übersichtsdiagramm)</span></h3>
+<p class="kern">„Vier Phasen: Struktur anlegen, Tests transpilieren, Kontext übernehmen, Projekt lauffähig machen.“</p>
+<ul>
+  <li><b>Initialisierung:</b> Quell- und Zielpfad, rekursiver Scan, Ordnerstruktur im Ziel spiegeln — die unveränderten Pfade sind integral.</li>
+  <li><b>Transpilation</b> der Test Cases (Details nächster Abschnitt).</li>
+  <li><b>Übernahme der Kontextstrukturen:</b> <code>.rs</code> → JSON · Global Variables → Python-Klasse · testeigene Variablen → Python-Klasse pro Test · Testdaten unverändert kopiert.</li>
+  <li><b>Abschluss:</b> <code>pytest.ini</code>, <code>requirements.txt</code>, <code>.gitignore</code>, <code>README.md</code>, Laufzeithelfer.</li>
+  <li>Sieben spezialisierte Module, von <code>main.py</code> orchestriert. Modulnamen nicht einzeln vorlesen — Zahl und Prinzip genügen.</li>
+  <li><b>Robustheitsentscheidung:</b> nicht übersetzbare Skripte werden nicht verworfen, sondern nach <code>src/unreadable_tests/</code> gelegt. Der Durchlauf bleibt stabil, die Problemfälle bleiben sichtbar.</li>
+</ul>
+</section>
+
+<section>
+<h3>7 — Transpilation &amp; Regex <span class="when">· 7:15–8:45 · Kap. 4.3 (Aktivitätsdiagramm), 5.3.1</span></h3>
+<p class="kern">„Sieben Schritte, die den Groovy-Test schrittweise auf seine Logik reduzieren und dann in Python wieder aufbauen.“</p>
+<p>Einlesen → Kommentare und Imports entfernen → Testzeilen extrahieren → parsen (Klasse, Methode, Parameter) → transformieren → Python-Code erzeugen → zum vollständigen Test zusammensetzen.</p>
+<p>Zu Regex nicht die Sprache erklären, sondern das Prinzip: die Muster arbeiten nicht unabhängig, sondern als aufeinander aufbauende Kette —</p>
+<ul>
+  <li><code>katalon_lines_pattern</code>: Zeilenblock → Matches mit Gruppen für Klasse, Methode, Parameter</li>
+  <li><code>fto_as_param_pat</code>: erkennt <code>findTestObject()</code> als ersten Parameter, wenn ein Komma folgt</li>
+  <li><code>fto_param_str_pattern</code>: extrahiert das String-Argument daraus</li>
+</ul>
+<p class="note">Entwickelt und visualisiert mit Regex101, anschließend in Python gegengeprüft, damit die Ausdrücke zur tatsächlichen Laufzeitumgebung passen. Vollständige Übersicht: <b>Anhang 8.1</b>.</p>
+</section>
+
+<section>
+<h3>8 — Vorher / Nachher <span class="when">· 8:45–10:00 · Kap. 5.3.1.1 + 5.3.1.2</span></h3>
+<p class="kern">„Der Trick ist die Zweiteilung: Format-Konvertierung zur Build-Time, Auflösung zur Laufzeit.“</p>
+<p class="note">Konzeptionell interessantester Teil — hier ruhig langsam sprechen.</p>
+<ul>
+  <li><b>Build-Time:</b> <code>.rs</code> → JSON, Struktur bleibt identisch, nur das Format ändert sich.</li>
+  <li><b>Laufzeit:</b> <code>find_katalon_test_object()</code> liest <code>selectorMethod</code>, sucht den passenden Wert aus der <code>selectorCollection</code> und lokalisiert über <code>By.CSS_SELECTOR</code> bzw. <code>By.XPATH</code> (bei <code>BASIC</code> und allem anderen).</li>
+  <li><b>Ergebnis:</b> Der generierte Test kennt die Strategie gar nicht, er übergibt nur einen Pfad — strukturell identisch zum Katalon-Original.</li>
+</ul>
+<pre><span class="lang">Groovy</span>
+WebUI.click(findTestObject('All_Users/view_all_users_btn'))
+
+<span class="lang">Python</span>
+kh.find_katalon_test_object(self.driver, 'All_Users/view_all_users_btn').click()</pre>
+<p>Drei Transformationsarten am Beispiel (Kap. 5.3.1.2):</p>
+<ul>
+  <li>Assertions auf Seiteninhalte: <code>WebUI.verifyTextPresent(...)</code> → <code>assert '...' in self.driver.page_source</code></li>
+  <li>Objektzugriffe über den Laufzeithelfer: <code>setText(...)</code> → <code>.clear()</code> + <code>.send_keys(variables.david)</code></li>
+  <li>Variablenzugriffe auf die neuen Strukturen: <code>GlobalVariable.user4name</code> → <code>GlobalVariable.USER4NAME</code></li>
+</ul>
+<p class="note">Pfade und Objektbezeichner werden nicht verworfen, sondern in ein neues Zugriffsschema übertragen — deshalb bleibt die Bindung zwischen Testlogik und Kontext nach der Migration erhalten.</p>
+</section>
+
+<section>
+<h3>9 — Evaluation <span class="when">· 10:00–12:15 · Kap. 6.2 → 6.3 → 6.4 → 6.5</span></h3>
+<p class="kern">„7 von 10 Testskripten automatisch, alle umgebenden Strukturen vollständig — und das Ergebnis läuft.“</p>
+<p class="note">Setup kurz vorweg: <code>sample-website-katalon-tests</code>, Windows 11, Python 3.13.0, pytest 8.4.1.</p>
+<ul>
+  <li><b>Kap. 6.2 Migrationsergebnis</b> (Tabelle + Konsolenausschnitt): 7/10 Testskripte = <b>70 %</b>. Object Repository <b>10/10</b> nach JSON. Dazu 1 Variablendatei, 2 Runtime-Dateien, 4 Konfigurationsdateien, 1 Datendatei.</li>
+  <li><b>Kap. 6.3 Strukturelle Integrität:</b> <code>pytest --collect-only</code> importiert alle generierten Dateien fehlerfrei und findet genau die 7 erwarteten Tests. Testlauf: Katalon 10/10 grün, Python 7/7 grün — die Differenz sind exakt die drei nicht übersetzten Fälle, <b>keine zusätzlichen Fehler durch die Migration</b>.</li>
+  <li><b>Kap. 6.4 Codequalität:</b> Boilerplate von 18 auf 7 Importzeilen, Testlogik in Standard-Python mit Pytest-Konventionen, keine proprietären Keywords mehr.</li>
+  <li><b>Kap. 6.5 Aufwand:</b> Migration unter einer Sekunde gegenüber geschätzt hohem einstelligen bis zweistelligen Stundenbereich manuell. Wichtiger als die Einzelzahl: <b>die Skalierung</b>. Der Migrator wächst linear mit der Testanzahl, der manuelle Aufwand überproportional, weil mit jedem Test die Querbezüge zu Variablen, Objekten und Daten dazukommen.</li>
+</ul>
+<p class="note">Die 30 % selbst ansprechen, bevor jemand fragt — das wirkt souveräner als eine Verteidigung auf Nachfrage.</p>
+</section>
+
+<section>
+<h3>10 — Grenzen <span class="when">· 12:15–13:00 · Kap. 4.5 / 5.4</span></h3>
+<p class="kern">„Bewusst auf die häufigsten Migrationspfade fokussiert, nicht auf Vollständigkeit.“</p>
+<ul>
+  <li>Custom Keywords (eigene Klassen in <code>Keywords/</code>, Weiterleitungen über <code>Libs/CustomKeywords.groovy</code>).</li>
+  <li>Stark verschachtelte Testlogik und Parameterlisten, von der Norm abweichende Groovy-Konstrukte, Schleifen und Kontrollstrukturen.</li>
+  <li>Kommentare werden derzeit vollständig entfernt.</li>
+  <li>Methodisch ehrlich: ein Beispielprojekt mit 10 Tests — die 70 % sind ein belastbarer Indikator, keine allgemeingültige Quote.</li>
+</ul>
+</section>
+
+<section>
+<h3>11 — Fazit &amp; Ausblick <span class="when">· 13:00–14:00 · Kap. 7</span></h3>
+<p class="kern">„Kein vollständiger Ersatz für manuelle Migration, aber ein wirksamer Ausstiegspfad.“</p>
+<ul>
+  <li>70 % der Testskripte und alle umgebenden Strukturen automatisch, Projekt nach minimalem Setup lauffähig.</li>
+  <li>Der Ausstieg aus einem proprietären Testökosystem ist automatisierbar — nicht restlos, aber weit genug, dass er wirtschaftlich wird.</li>
+  <li>Drei Richtungen: (1) mehr Katalon-Keyword-Methoden abdecken, (2) Parsing-Regeln für Kommentare, tiefere Verschachtelung, eigene Variablen/Methoden/Klassen und Schleifen erweitern, (3) Fehlerklassifikation und -ausgabe verbessern, damit die manuelle Nacharbeit gezielter wird.</li>
+  <li>Einstiegssatz wieder aufgreifen.</li>
+</ul>
+</section>
+
+<section>
+<h2>Wenn die Zeit knapp wird</h2>
+<p>In dieser Reihenfolge kürzen:</p>
+<ul>
+  <li>Abschnitt 5 (Zielstruktur) auf zwei Sätze</li>
+  <li>Abschnitt 10 (Grenzen) ins Fazit integrieren</li>
+  <li>Abschnitt 7 (Regex) auf das Prinzip ohne die drei Muster</li>
+  <li>Aufwandsvergleich in Abschnitt 9 auf einen Satz</li>
+</ul>
+<p><b>Nicht kürzen:</b> Abschnitt 4 und Abschnitt 8. Das sind die beiden Stellen, an denen du etwas zeigst, das nicht jeder schon weiß.</p>
+</section>
+
+<section>
+<h2>Wahrscheinliche Rückfragen</h2>
+<ul>
+  <li><b>„Warum Regex und kein echter Parser / AST?“</b> → Prototyp im Rahmen einer konkreten betrieblichen Aufgabe; die relevanten Katalon-Zeilen folgen einem stark eingeschränkten Muster (<code>WebUI.</code>-Aufrufe). Ein Groovy-AST wäre der robustere Weg für Schleifen und Verschachtelung — steht genau so im Ausblick.</li>
+  <li><b>„Woran genau sind die 3 Tests gescheitert?“</b> → Konstrukte außerhalb des abgedeckten Musterraums; sie landen in <code>src/unreadable_tests/</code> statt verloren zu gehen. Eine Fehlerkategorisierung ist bewusst als nächster Schritt benannt.</li>
+  <li><b>„Ist funktionale Äquivalenz wirklich nachgewiesen?“</b> → Geprüft wurden strukturelle Integrität (<code>collect-only</code>) und erfolgreiche Ausführung beider Projekte. Ein systematischer Verhaltensvergleich Schritt für Schritt wäre der nächste Ausbau — das offen so sagen.</li>
+  <li><b>„Lässt sich das auf andere Katalon-Projekte übertragen?“</b> → Ja, soweit sie die Standard-Katalon-Strukturen nutzen. Projektindividuelle Custom Keywords sind der limitierende Faktor.</li>
+  <li><b>„Warum nicht in Katalon bleiben und nur die Lizenz kaufen?“</b> → Kosten standen in keinem Verhältnis, und das Problem wiederholt sich bei der nächsten Funktion. Die Migration löst die Abhängigkeit, statt sie zu verschieben.</li>
+</ul>
+</section>
+
+<section>
+<h2>Kapitelübersicht für schnelles Springen im PDF</h2>
+<table>
+  <tr><th style="width:16%">Kap.</th><th>Titel</th></tr>
+  <tr><td class="t">1.1 / 1.2 / 1.3</td><td>Motivation · Problemstellung · Ziel &amp; Aufbau</td></tr>
+  <tr><td class="t">2.1–2.4</td><td>Automatisiertes Testen · Low-Code · Vendor Lock-in · Regex</td></tr>
+  <tr><td class="t">3.1.1–3.1.5</td><td>Katalon: Test Cases · Object Repository · Profile · Testdaten · Custom Keywords</td></tr>
+  <tr><td class="t">3.2.1–3.2.5</td><td>Verschachtelungen (Ordnerbäume)</td></tr>
+  <tr><td class="t">3.3.1–3.3.4</td><td>Python-Zielstruktur · Object Repository · Testdaten · Konfiguration</td></tr>
+  <tr><td class="t">4.1–4.5</td><td>Hintergrund · Architekturüberblick · Transpilation · Kontextstrukturen · Limitierungen</td></tr>
+  <tr><td class="t">5.1–5.4</td><td>Techstack · Projektstruktur · Umsetzung (5.3.1 Transpilation) · Grenzen</td></tr>
+  <tr><td class="t">6.1–6.5</td><td>Kriterien · Migrationsergebnis · Strukturelle Integrität · Codequalität · Aufwand</td></tr>
+  <tr><td class="t">7</td><td>Fazit und Ausblick</td></tr>
+  <tr><td class="t">8.1 / 8.2</td><td>Anhang: Regex-Muster · Katalon Projektstruktur</td></tr>
+</table>
+</section>
+
+</body>
+</html>
